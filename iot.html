@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    function renderControls() {
+      var devices = document.getElementById("devices").innerHTML.split(",");
+      var switchHtml = document.getElementById('switch-template').outerHTML;
+
+      /* Render */
+      var root = document.getElementById('controls');
+      var controlsToAdd = "";
+      var deviceIndex = 0;
+      devices.forEach(function(device) {
+        deviceIndex++;
+        var controlHtml = String(switchHtml).replaceAll("#switch-name", device).replace('#switch-num', deviceIndex);
+        controlsToAdd = controlsToAdd + controlHtml;
+      });
+      root.innerHTML = controlsToAdd;
+
+      /* Hide template */
+      document.getElementById('switch-template').style.display = 'none';
+    }
+  </script>
+  <script>
+    function handleCheck(elId, switchIndex) {
+      var clientIp = document.getElementById("client-ip").innerHTML;
+      var checkbox = document.getElementById(elId);
+      if (checkbox.checked) {
+	    	var xhr = new XMLHttpRequest();
+        xhr.open('GET', "http://" + clientIp + '/' + switchIndex + '_1', true);
+        xhr.send(null);
+	    }
+	    else {
+		    var xhr = new XMLHttpRequest();
+        xhr.open('GET', "http://" + clientIp + '/' + switchIndex + '_0', true);
+        xhr.send(null);
+	    } 
+    }
+    </script>
+<style>
+.switch {
+  position: absolute;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  right: 10px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.panel {
+  height: 50px;
+  position: relative;
+  border: thick double #32a1ce;
+  background-color: rgb(148, 212, 231);
+  /*padding: 9px 9px 0px 9px;*/
+  width: 92%;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 2px #2196F3;
+}
+
+.panel-label {
+  position: absolute;
+  left: 10px;
+  width: 65%;
+  font-family: cursive;
+  overflow: hidden; 
+}
+</style>
+</head>
+<body onload="renderControls()">
+
+<!-- Settings provided here. -->
+<p id="devices" hidden>#devices</p>
+<p id="client-ip" hidden>#client-ip</p>
+<h2>#title</h2>
+
+<!-- Template for switch control. Invisible.  -->
+<div id="switch-template" class="panel">
+    <div class="panel-label">
+      <label>#switch-name</label>    
+    </div>
+    <label class="switch">
+      <input id="#switch-name" type="checkbox" onchange="handleCheck('#switch-name', '#switch-num')">
+      <span class="slider round"></span>
+    </label>
+</div>
+
+<div id="controls">
+  <!-- All switches will be here. -->
+</div>
+
+</body>
+</html> 
